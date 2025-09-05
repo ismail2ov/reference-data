@@ -11,6 +11,7 @@
   <modules>
     <module>avro/trade-topic</module>
     <module>avro/isin-data-topic</module>
+    <module>avro/enriched-trade-topic</module>
   </modules>
 
   <properties>
