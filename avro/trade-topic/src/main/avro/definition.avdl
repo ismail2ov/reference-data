@@ -1,0 +1,25 @@
+@namespace("com.sixgroup.avro.trade")
+protocol TradeTopic {
+
+    record TradeKey {
+        string tradeRef;
+    }
+
+    record TradeValue {
+        int securityId;
+        TradeType tradeType;
+        long quantity;
+        long price;
+        long timestamp;
+    }
+
+    enum TradeType {
+        VISIBLE_ORDER, // 1 = trade against visible order quantity
+        HIDDEN_ORDER, // 2 = trade against hidden or reserve quantity
+        MARKET_AT_CLOSE, // 3 = Market at Close (MaC) trade
+        LIS_CROSS, // 4 = LIS Cross trade
+        BENCHMARK_CROSS, // 5 = Benchmark Cross trade
+        AUCTION_ON_DEMAND, // 6 = Auction on Demand (AoD) trade
+        AQUIS_VWAP_MATCH// 12 = Aquis VWAP Match (AVM) trade
+    }
+}
