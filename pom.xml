@@ -10,6 +10,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>avro/trade-topic</module>
+    <module>avro/isin-data-topic</module>
   </modules>
 
   <properties>

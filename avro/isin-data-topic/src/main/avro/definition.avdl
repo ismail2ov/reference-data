@@ -1,0 +1,14 @@
+@namespace("com.sixgroup.avro.isin.data")
+protocol IsinDataTopic {
+
+    record IsinDataKey {
+        string isin;
+    }
+
+    record IsinDataValue {
+        date maturityDate;
+        string currency;
+        string cfi;
+    }
+
+}
