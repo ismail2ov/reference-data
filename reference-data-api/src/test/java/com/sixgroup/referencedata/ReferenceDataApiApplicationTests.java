@@ -1,4 +1,4 @@
-package com.sixgroup.reference_data_api;
+package com.sixgroup.referencedata;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;

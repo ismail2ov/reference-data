@@ -1,0 +1,387 @@
+openapi: 3.0.1
+info:
+  title: Reference data API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /trades:
+    post:
+      operationId: createTrade
+      summary: Create a new trade and send it to Kafka
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trade'
+      responses:
+        '201':
+          description: Trade created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tradeRef:
+                    type: string
+                    example: "123456789"
+                  message:
+                    type: string
+                    example: "Trade successfully created and sent to Kafka"
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: Bad request.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: Internal Server Error.
+    get:
+      operationId: getTrades
+      summary: Get the latest trade records from Kafka with pagination
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number (starts from 1)
+        - in: query
+          name: size
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Number of records per page
+      responses:
+        '200':
+          description: List of latest trades with pagination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                    example: 2
+                  size:
+                    type: integer
+                    example: 50
+                  totalPages:
+                    type: integer
+                    example: 10
+                  totalRecords:
+                    type: integer
+                    example: 500
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Trade'
+
+  /enriched-trades/{tradeRef}:
+    get:
+      operationId: getEnrichedTrade
+      summary: Get all enriched trade records by tradeRef from KTable
+      parameters:
+        - in: path
+          name: tradeRef
+          required: true
+          schema:
+            type: string
+          description: Trade reference
+      responses:
+        '200':
+          description: Enriched trade record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrichedTrade'
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: Bad request
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: Not found.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: Internal Server Error.
+
+  /isins:
+    post:
+      operationId: createIsin
+      summary: Create a new ISIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Isin'
+      responses:
+        '201':
+          description: ISIN created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tradeRef:
+                    type: string
+                    example: "T123456789"
+                  message:
+                    type: string
+                    example: "Trade successfully created and sent to Kafka"
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: Bad request
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: Not found.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: Internal Server Error.
+    get:
+      operationId: getIsins
+      summary: Get the latest trade records from Kafka with pagination
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number (starts from 1)
+        - in: query
+          name: size
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Number of records per page
+      responses:
+        '200':
+          description: List of latest trades with pagination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                    example: 2
+                  size:
+                    type: integer
+                    example: 50
+                  totalPages:
+                    type: integer
+                    example: 10
+                  totalRecords:
+                    type: integer
+                    example: 500
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Trade'
+
+  /isins/{isin}:
+    get:
+      operationId: getIsin
+      summary: Get the ISIN information from KTable
+      parameters:
+        - in: path
+          name: isin
+          required: true
+          schema:
+            type: string
+            description: >
+              International Securities Identification Number (ISIN).
+              Must follow the ISO 6166 format: 2 letters (country code), 
+              9 alphanumeric characters, and 1 check digit.
+            pattern: '^[A-Z]{2}[A-Z0-9]{9}[0-9]$'
+            example: "ES0113506002"
+      responses:
+        '200':
+          description: List of latest enriched trades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Isin'
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: Bad request
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: Not found.
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: Internal Server Error.
+
+components:
+  schemas:
+    TradeType:
+      type: string
+      enum:
+        - VISIBLE_ORDER
+        - HIDDEN_ORDER
+        - MARKET_AT_CLOSE
+        - LIS_CROSS
+        - BENCHMARK_CROSS
+        - AUCTION_ON_DEMAND
+        - AQUIS_VWAP_MATCH
+
+    Trade:
+      type: object
+      properties:
+        tradeRef:
+          type: string
+        tradeType:
+          $ref: '#/components/schemas/TradeType'
+        quantity:
+          type: integer
+        price:
+          type: integer
+        timestamp:
+          type: integer
+          format: int64
+
+    EnrichedTrade:
+      type: object
+      properties:
+        tradeRef:
+          type: string
+        tradeType:
+          $ref: '#/components/schemas/TradeType'
+        quantity:
+          type: integer
+        price:
+          type: integer
+        currency:
+          type: string
+        maturityDate:
+          type: string
+          format: date
+        cfi:
+          type: string
+        timestamp:
+          type: integer
+          format: int64
+
+    Isin:
+      type: object
+      properties:
+        isin:
+          type: string
+          description: >
+            International Securities Identification Number (ISIN).
+            Must follow the ISO 6166 format: 2 letters (country code), 
+            9 alphanumeric characters, and 1 check digit.
+          pattern: '^[A-Z]{2}[A-Z0-9]{9}[0-9]$'
+          example: "ES0113506002"
+        maturityDate:
+          type: string
+          format: date
+        currency:
+          type: string
+        cfi:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - type
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
