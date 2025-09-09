@@ -159,17 +159,13 @@ paths:
       responses:
         '201':
           description: ISIN created successfully
-          content:
-            application/json:
+          headers:
+            Location:
+              description: URI of the created trade resource
               schema:
-                type: object
-                properties:
-                  tradeRef:
-                    type: string
-                    example: "T123456789"
-                  message:
-                    type: string
-                    example: "Trade successfully created and sent to Kafka"
+                type: string
+                format: uri
+                example: /isins/ES0113506002
         '400':
           description: Bad Request.
           content:
@@ -244,7 +240,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Trade'
+                      $ref: '#/components/schemas/Isin'
 
   /isins/{isin}:
     get:

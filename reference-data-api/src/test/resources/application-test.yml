@@ -1,0 +1,33 @@
+
+spring:
+  application:
+    name: my-api
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: mock://test-schema-registry
+        auto.register.schemas: true
+        use.latest.version: true
+    consumer:
+      group-id: my-consumer-group
+      auto-offset-reset: earliest
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: mock://test-schema-registry
+        specific.avro.reader: true
+        auto.register.schemas: true
+        use.latest.version: true
+
+topics:
+  trades: trades-topic-test
+  enriched-trades: enriched-trades-topic-test
+  isin: isin-topic-test
+
+logging:
+  level:
+    org.apache.kafka: INFO
+    org.springframework.kafka: DEBUG
