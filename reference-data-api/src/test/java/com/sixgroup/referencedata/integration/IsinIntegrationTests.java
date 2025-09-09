@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
-import com.sixgroup.referencedata.TestcontainersConfiguration;
 import com.sixgroup.referencedata.infrastructure.configuration.TopicsConfiguration;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
 
