@@ -78,24 +78,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  page:
-                    type: integer
-                    example: 2
-                  size:
-                    type: integer
-                    example: 50
-                  totalPages:
-                    type: integer
-                    example: 10
-                  totalRecords:
-                    type: integer
-                    example: 500
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Trade'
+                $ref: '#/components/schemas/TradesList'
 
   /enriched-trades/{tradeRef}:
     get:
@@ -198,7 +181,7 @@ paths:
                 message: Internal Server Error.
     get:
       operationId: getIsins
-      summary: Get the latest trade records from Kafka with pagination
+      summary: Get the ISIN records from Kafka with pagination
       parameters:
         - in: query
           name: page
@@ -223,24 +206,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  page:
-                    type: integer
-                    example: 2
-                  size:
-                    type: integer
-                    example: 50
-                  totalPages:
-                    type: integer
-                    example: 10
-                  totalRecords:
-                    type: integer
-                    example: 500
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Isin'
+                $ref: '#/components/schemas/IsinList'
 
   /isins/{isin}:
     get:
@@ -264,8 +230,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
                   $ref: '#/components/schemas/Isin'
         '400':
           description: Bad Request.
@@ -326,6 +290,26 @@ components:
           type: integer
           format: int64
 
+    TradesList:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 2
+        size:
+          type: integer
+          example: 50
+        totalPages:
+          type: integer
+          example: 10
+        totalRecords:
+          type: integer
+          example: 500
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trade'
+
     EnrichedTrade:
       type: object
       properties:
@@ -366,6 +350,26 @@ components:
           type: string
         cfi:
           type: string
+
+    IsinList:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 2
+        size:
+          type: integer
+          example: 50
+        totalPages:
+          type: integer
+          example: 10
+        totalRecords:
+          type: integer
+          example: 500
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Isin'
 
     ErrorResponse:
       type: object

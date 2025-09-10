@@ -1,7 +1,6 @@
 package com.sixgroup.referencedata.infrastructure.controller;
 
 import java.net.URI;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +9,7 @@ import com.sixgroup.referencedata.application.IsinService;
 import com.sixgroup.referencedata.domain.IsinVO;
 import com.sixgroup.referencedata.infrastructure.configuration.TopicsConfiguration;
 import com.sixgroup.referencedata.infrastructure.controller.api.IsinsApi;
-import com.sixgroup.referencedata.infrastructure.controller.model.GetIsins200ResponseRDTO;
+import com.sixgroup.referencedata.infrastructure.controller.model.IsinListRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
 import com.sixgroup.referencedata.infrastructure.mapper.IsinMapper;
 
@@ -34,12 +33,13 @@ public class IsinController implements IsinsApi {
     }
 
     @Override
-    public ResponseEntity<List<IsinRDTO>> getIsin(String isin) {
+    public ResponseEntity<IsinRDTO> getIsin(String isin) {
         return null;
     }
 
     @Override
-    public ResponseEntity<GetIsins200ResponseRDTO> getIsins(Integer page, Integer size) {
+    public ResponseEntity<IsinListRDTO> getIsins(Integer page, Integer size) {
         return null;
     }
+
 }
