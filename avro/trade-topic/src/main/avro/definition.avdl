@@ -8,6 +8,7 @@ protocol TradeTopic {
     record TradeValue {
         int securityId;
         TradeType tradeType;
+        string isin;
         long quantity;
         long price;
         long timestamp;
