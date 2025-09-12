@@ -1,9 +1,9 @@
 services:
 
   broker:
+    container_name: broker
     image: confluentinc/cp-kafka:8.0.0
     hostname: broker
-    container_name: broker
     ports:
       - "9092:9092"
       - "9101:9101"
@@ -50,3 +50,12 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'broker:29092'
       KAFKA_CLUSTERS_0_JMXPORT: 9101
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+
+  init-topics:
+    container_name: init-topics
+    image: confluentinc/cp-kafka:8.0.0
+    depends_on:
+      - broker
+    volumes:
+      - ./scripts/init-topics.sh:/init-topics.sh
+    entrypoint: [ "sh", "-c", "/init-topics.sh" ]
