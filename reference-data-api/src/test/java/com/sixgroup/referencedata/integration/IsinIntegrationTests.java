@@ -95,7 +95,7 @@ class IsinIntegrationTests {
     }
 
     @Test
-    void whenThereRequestRequestPageThenItReturnsAListOfIsins() {
+    void whenThereIsIsinPageThenReturnsIt() {
         publishIsinRecord("ES0B00165083");
         publishIsinRecord("ES0B00164946");
         publishIsinRecord("ES0B00165067");
