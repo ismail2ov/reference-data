@@ -1,11 +1,11 @@
-package com.sixgroup.referencedata.infrastructure.persistence.kafka;
+package com.sixgroup.referencedata.infrastructure.messaging.repository;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
-import com.sixgroup.referencedata.infrastructure.configuration.TopicsConfiguration;
+import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

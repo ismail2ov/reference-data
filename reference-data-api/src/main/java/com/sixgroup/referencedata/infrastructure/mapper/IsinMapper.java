@@ -15,4 +15,7 @@ public interface IsinMapper {
     IsinDataKey keyFrom(IsinVO isinVO);
 
     IsinDataValue valueFrom(IsinVO isinVO);
+
+    IsinRDTO from(IsinVO isinVO);
+
 }

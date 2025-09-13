@@ -10,7 +10,7 @@ import com.sixgroup.referencedata.domain.IsinRepository;
 public class BeansConfiguration {
 
     @Bean
-    public IsinService getProductService(IsinRepository isinRepository) {
+    public IsinService getIsinService(IsinRepository isinRepository) {
         return new IsinService(isinRepository);
     }
 

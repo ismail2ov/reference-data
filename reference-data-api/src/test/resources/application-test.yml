@@ -1,26 +1,26 @@
-
 spring:
   application:
-    name: my-api
+    name: reference-data-api
+
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+
+    properties:
+      schema.registry.url: mock://test-schema-registry
+      specific.avro.reader: true
+
     producer:
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-      properties:
-        schema.registry.url: mock://test-schema-registry
-        auto.register.schemas: true
-        use.latest.version: true
+
     consumer:
       group-id: my-consumer-group
       auto-offset-reset: earliest
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-      properties:
-        schema.registry.url: mock://test-schema-registry
-        specific.avro.reader: true
-        auto.register.schemas: true
-        use.latest.version: true
+
+    streams:
+      application-id: reference-data
 
 topics:
   trades: trades-topic-test

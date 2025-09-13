@@ -23,14 +23,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  tradeRef:
-                    type: string
-                    example: "123456789"
-                  message:
-                    type: string
-                    example: "Trade successfully created and sent to Kafka"
+                $ref: '#/components/schemas/Trade'
         '400':
           description: Bad Request.
           content:
@@ -289,6 +282,10 @@ components:
         timestamp:
           type: integer
           format: int64
+        securityId:
+          type: integer
+        isin:
+          type: string
 
     TradesList:
       type: object

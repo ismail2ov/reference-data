@@ -2,12 +2,12 @@ package com.sixgroup.referencedata.infrastructure.controller;
 
 import java.net.URI;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sixgroup.referencedata.application.IsinService;
 import com.sixgroup.referencedata.domain.IsinVO;
-import com.sixgroup.referencedata.infrastructure.configuration.TopicsConfiguration;
 import com.sixgroup.referencedata.infrastructure.controller.api.IsinsApi;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinListRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
@@ -21,7 +21,6 @@ public class IsinController implements IsinsApi {
 
     private final IsinService isinService;
     private final IsinMapper isinMapper;
-    private final TopicsConfiguration topicsConfiguration;
 
     @Override
     public ResponseEntity<Void> createIsin(IsinRDTO isinRDTO) {
@@ -34,7 +33,10 @@ public class IsinController implements IsinsApi {
 
     @Override
     public ResponseEntity<IsinRDTO> getIsin(String isin) {
-        return null;
+        IsinVO isinVO = isinService.getIsinData(isin);
+        IsinRDTO isinRDTO = isinMapper.from(isinVO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(isinRDTO);
     }
 
     @Override

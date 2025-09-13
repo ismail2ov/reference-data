@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.infrastructure.configuration;
+package com.sixgroup.referencedata.infrastructure.messaging.kafka;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

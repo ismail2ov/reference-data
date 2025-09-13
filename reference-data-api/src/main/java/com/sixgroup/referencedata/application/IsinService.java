@@ -14,4 +14,9 @@ public class IsinService {
     public IsinVO createIsin(IsinVO isinVO) {
         return isinRepository.persist(isinVO);
     }
+
+    public IsinVO getIsinData(String isin) {
+        return isinRepository.getIsinData(isin);
+    }
+
 }
