@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
+import com.sixgroup.referencedata.infrastructure.controller.model.IsinListRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 
@@ -30,9 +31,7 @@ import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfigura
 @Import({TestcontainersConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class IsinIntegrationTests {
-
-    public static final String ISIN = "ES0B00157734";
+class IsinIntegrationTests {
 
     @Autowired
     TopicsConfiguration topicsConfiguration;
@@ -68,23 +67,61 @@ public class IsinIntegrationTests {
 
     @Test
     void whenIsinExistsThenReturnIsin() {
+        String isin = "ES0B00157734";
 
-        IsinDataKey isinDataKey = IsinDataKey.newBuilder().setIsin(ISIN).build();
+        IsinRDTO newIsin = publishIsinRecord(isin);
+
+        ResponseEntity<IsinRDTO> response = testRestTemplate.getForEntity("/isins/" + isin, IsinRDTO.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isEqualTo(newIsin);
+    }
+
+    @Test
+    void whenThereAreFourDifferentIsinsThenItReturnsAListOfIsins() {
+        List<IsinRDTO> expected = List.of(
+            publishIsinRecord("ES0B00152511"),
+            publishIsinRecord("ES0B00157734"),
+            publishIsinRecord("ES0B00162973"),
+            publishIsinRecord("ES0B00168079")
+        );
+        publishIsinRecord("ES0B00152511");
+
+        ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins", IsinListRDTO.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getData()).containsAll(expected);
+    }
+
+    @Test
+    void whenThereRequestRequestPageThenItReturnsAListOfIsins() {
+        publishIsinRecord("ES0B00165083");
+        publishIsinRecord("ES0B00164946");
+        publishIsinRecord("ES0B00165067");
+        publishIsinRecord("ES0B00164920");
+        publishIsinRecord("ES0B00166289");
+
+        ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins?page=2&size=2", IsinListRDTO.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getData()).hasSize(2);
+    }
+
+    private IsinRDTO publishIsinRecord(String isin) {
+        IsinDataKey isinDataKey = IsinDataKey.newBuilder().setIsin(isin).build();
         IsinDataValue isinDataValue = IsinDataValue.newBuilder().setMaturityDate(LocalDate.of(2025, 12, 10)).setCurrency("EUR").setCfi("FFDPSX")
             .build();
 
         IsinRDTO newIsin = new IsinRDTO()
-            .isin(ISIN)
+            .isin(isin)
             .maturityDate(LocalDate.of(2025, 12, 10))
             .currency("EUR")
             .cfi("FFDPSX");
 
         kafkaTemplate.send(topicsConfiguration.getIsin(), isinDataKey, isinDataValue);
-
-        ResponseEntity<IsinRDTO> response = testRestTemplate.getForEntity("/isins/" + ISIN, IsinRDTO.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody()).isEqualTo(newIsin);
+        return newIsin;
     }
 
 }

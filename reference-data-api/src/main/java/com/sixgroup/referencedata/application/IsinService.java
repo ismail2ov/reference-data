@@ -2,6 +2,7 @@ package com.sixgroup.referencedata.application;
 
 import com.sixgroup.referencedata.domain.IsinRepository;
 import com.sixgroup.referencedata.domain.IsinVO;
+import com.sixgroup.referencedata.domain.IsinsPageVO;
 
 public class IsinService {
 
@@ -19,4 +20,7 @@ public class IsinService {
         return isinRepository.getIsinData(isin);
     }
 
+    public IsinsPageVO getIsins(Integer page, Integer size) {
+        return isinRepository.getIsins(page, size);
+    }
 }

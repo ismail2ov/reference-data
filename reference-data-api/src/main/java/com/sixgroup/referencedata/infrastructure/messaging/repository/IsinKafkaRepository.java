@@ -6,6 +6,7 @@ import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
 import com.sixgroup.referencedata.domain.IsinRepository;
 import com.sixgroup.referencedata.domain.IsinVO;
+import com.sixgroup.referencedata.domain.IsinsPageVO;
 import com.sixgroup.referencedata.domain.exception.IsinNotFoundException;
 import com.sixgroup.referencedata.infrastructure.mapper.IsinMapper;
 
@@ -30,6 +31,11 @@ public class IsinKafkaRepository implements IsinRepository {
     @Override
     public IsinVO getIsinData(String isin) {
         return isinKTableRepository.findByKey(isin).orElseThrow(() -> new IsinNotFoundException("ISIN '{}' not found, isin"));
+    }
+
+    @Override
+    public IsinsPageVO getIsins(Integer page, Integer size) {
+        return isinKTableRepository.getIsins(page, size);
     }
 
 }

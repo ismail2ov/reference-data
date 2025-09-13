@@ -6,4 +6,5 @@ public interface IsinRepository {
 
     IsinVO getIsinData(String isin);
 
+    IsinsPageVO getIsins(Integer page, Integer size);
 }

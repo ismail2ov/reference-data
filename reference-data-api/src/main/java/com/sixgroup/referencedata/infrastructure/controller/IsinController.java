@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sixgroup.referencedata.application.IsinService;
 import com.sixgroup.referencedata.domain.IsinVO;
+import com.sixgroup.referencedata.domain.IsinsPageVO;
 import com.sixgroup.referencedata.infrastructure.controller.api.IsinsApi;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinListRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
@@ -41,7 +42,10 @@ public class IsinController implements IsinsApi {
 
     @Override
     public ResponseEntity<IsinListRDTO> getIsins(Integer page, Integer size) {
-        return null;
+        IsinsPageVO isinsPageVO = isinService.getIsins(page, size);
+        IsinListRDTO isinListRDTO = isinMapper.fromPage(isinsPageVO);
+
+        return ResponseEntity.ok(isinListRDTO);
     }
 
 }
