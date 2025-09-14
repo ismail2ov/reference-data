@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IsinKafkaRepository implements IsinRepository {
 
-    private final IsinKTableRepository isinKTableRepository;
+    private final IsinKTable isinKTable;
     private final IsinPublisher isinPublisher;
     private final IsinMapper isinMapper;
 
@@ -30,12 +30,12 @@ public class IsinKafkaRepository implements IsinRepository {
 
     @Override
     public IsinVO getIsinData(String isin) {
-        return isinKTableRepository.findByKey(isin).orElseThrow(() -> new IsinNotFoundException("ISIN '{}' not found, isin"));
+        return isinKTable.findByKey(isin).orElseThrow(() -> new IsinNotFoundException("ISIN '{}' not found, isin"));
     }
 
     @Override
     public IsinsPageVO getIsins(Integer page, Integer size) {
-        return isinKTableRepository.getIsins(page, size);
+        return isinKTable.getIsins(page, size);
     }
 
 }

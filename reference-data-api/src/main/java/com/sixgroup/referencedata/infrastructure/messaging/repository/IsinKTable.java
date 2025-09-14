@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class IsinKTableRepository {
+public class IsinKTable {
 
     private final StreamsBuilderFactoryBean streamsBuilderFactoryBean;
     private final IsinMapper isinMapper;

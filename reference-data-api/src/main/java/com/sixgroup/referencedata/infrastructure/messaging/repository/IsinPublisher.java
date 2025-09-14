@@ -1,7 +1,7 @@
 package com.sixgroup.referencedata.infrastructure.messaging.repository;
 
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
@@ -10,7 +10,7 @@ import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfigura
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 @Slf4j
 public class IsinPublisher {

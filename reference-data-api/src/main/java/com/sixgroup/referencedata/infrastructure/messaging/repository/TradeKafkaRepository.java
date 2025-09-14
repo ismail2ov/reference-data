@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TradeKafkaRepository implements TradeRepository {
 
     private final KafkaTemplate<TradeKey, TradeValue> kafkaTemplate;
-    private final TradeConsumerRepository tradeConsumerRepository;
+    private final TradeConsumer tradeConsumer;
     private final TopicsConfiguration topicsConfiguration;
     private final TradeMapper tradeMapper;
 
@@ -34,7 +34,7 @@ public class TradeKafkaRepository implements TradeRepository {
 
     @Override
     public TradesPageVO getTrades(Integer page, Integer size) {
-        return tradeConsumerRepository.getTrades(page, size);
+        return tradeConsumer.getTrades(page, size);
     }
 
     private void publishTrade(TradeKey key, TradeValue value) {

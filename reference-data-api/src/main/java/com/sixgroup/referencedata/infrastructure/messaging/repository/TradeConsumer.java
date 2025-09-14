@@ -1,7 +1,11 @@
 package com.sixgroup.referencedata.infrastructure.messaging.repository;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Repository;
@@ -20,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class TradeConsumerRepository {
+public class TradeConsumer {
 
     private final KafkaProperties kafkaProperties;
     private final TopicsConfiguration topicsConfiguration;
