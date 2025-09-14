@@ -46,44 +46,65 @@ public class TradeConsumer {
             Map<TopicPartition, Long> beginningOffsets = consumer.beginningOffsets(partitions);
             Map<TopicPartition, Long> endOffsets = consumer.endOffsets(partitions);
 
-            int totalRecords = (int) endOffsets.entrySet().stream()
-                .mapToLong(e -> e.getValue() - beginningOffsets.get(e.getKey()))
-                .sum();
+            int skipRecords = (page - 1) * size;
+            TradesPageVO tradesPageStats = calculateTotals(page, size, beginningOffsets, endOffsets);
 
-            int totalPages = (int) Math.ceil((double) totalRecords / size);
-            int fromIndex = (page - 1) * size;
-
-            if (fromIndex >= totalRecords) {
-                return new TradesPageVO(page, size, totalPages, totalRecords, List.of());
+            if (skipRecords >= tradesPageStats.totalRecords()) {
+                return tradesPageStats;
             }
 
             List<TradeVO> trades = new ArrayList<>();
-            long currentIndex = 0;
 
             for (TopicPartition tp : partitions) {
-                long start = beginningOffsets.get(tp) + fromIndex;
-                long end = endOffsets.get(tp);
-
-                if (start >= end) {
-                    continue;
-                }
-
-                consumer.seek(tp, start);
-
-                while (consumer.position(tp) < end) {
-                    var consumerRecords = consumer.poll(Duration.ofMillis(200));
-                    for (var tradeRecord : consumerRecords.records(tp)) {
-                        if (currentIndex < size) {
-                            TradeVO trade = tradeMapper.from(tradeRecord.key(), tradeRecord.value());
-                            trades.add(trade);
-                        }
-                        currentIndex++;
+                int tpNumRecords = (int) (endOffsets.get(tp) - beginningOffsets.get(tp));
+                if (skipRecords > tpNumRecords) {
+                    skipRecords -= tpNumRecords;
+                } else {
+                    long start = beginningOffsets.get(tp) + skipRecords;
+                    long end = endOffsets.get(tp);
+                    if (start < end) {
+                        int maxRecords = size - trades.size();
+                        List<TradeVO> recordsFromPartition = consumeRecordsFromPartition(consumer, tp, start, end, maxRecords);
+                        trades.addAll(recordsFromPartition);
                     }
                 }
             }
 
-            return new TradesPageVO(page, size, totalPages, totalRecords, trades);
+            return tradesPageStats.withTrades(trades);
         }
+    }
+
+    private List<TradeVO> consumeRecordsFromPartition(KafkaConsumer<TradeKey, TradeValue> consumer, TopicPartition topicPartition, long start,
+        long end, int maxRecords) {
+        List<TradeVO> trades = new ArrayList<>();
+
+        consumer.seek(topicPartition, start);
+
+        while (consumer.position(topicPartition) < end) {
+            var consumerRecords = consumer.poll(Duration.ofMillis(200));
+            for (var tradeRecord : consumerRecords.records(topicPartition)) {
+                TradeVO trade = tradeMapper.from(tradeRecord.key(), tradeRecord.value());
+                trades.add(trade);
+
+                if (trades.size() >= maxRecords) {
+                    return trades;
+                }
+            }
+        }
+
+        return trades;
+    }
+
+    private TradesPageVO calculateTotals(Integer page, Integer size, Map<TopicPartition, Long> beginningOffsets,
+        Map<TopicPartition, Long> endOffsets) {
+
+        int totalRecords = (int) endOffsets.entrySet().stream()
+            .mapToLong(e -> e.getValue() - beginningOffsets.get(e.getKey()))
+            .sum();
+
+        int totalPages = (int) Math.ceil((double) totalRecords / size);
+
+        return new TradesPageVO(page, size, totalPages, totalRecords, List.of());
     }
 
     private Properties buildRandomConsumerProps() {
