@@ -9,7 +9,7 @@ import com.sixgroup.referencedata.domain.IsinsPageVO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinListRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
 
-@Mapper
+@Mapper(uses = BaseMapper.class)
 public interface IsinMapper {
 
     IsinVO from(IsinRDTO isinRDTO);
@@ -26,7 +26,4 @@ public interface IsinMapper {
 
     IsinVO from(IsinDataKey key, IsinDataValue value);
 
-    default String map(CharSequence cs) {
-        return cs == null ? null : cs.toString();
-    }
 }

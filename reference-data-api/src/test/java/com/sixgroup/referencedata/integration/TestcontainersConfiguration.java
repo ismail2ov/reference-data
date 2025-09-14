@@ -7,8 +7,6 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -21,19 +19,16 @@ import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfigura
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfiguration {
 
-    @DynamicPropertySource
-    static void registerKafkaProperties(DynamicPropertyRegistry registry) {
-        KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:latest"));
-        kafkaContainer.start();
+    static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:latest"));
 
-        registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
-        registry.add("spring.kafka.streams.application-id", () -> "test-streams-app");
+    static {
+        kafkaContainer.start();
     }
 
     @Bean
     @ServiceConnection
     KafkaContainer kafkaContainer() {
-        return new KafkaContainer(DockerImageName.parse("apache/kafka-native:latest"));
+        return kafkaContainer;
     }
 
     @Bean

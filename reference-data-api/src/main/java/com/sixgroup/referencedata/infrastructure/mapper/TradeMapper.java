@@ -5,9 +5,11 @@ import org.mapstruct.Mapper;
 import com.sixgroup.avro.trade.TradeKey;
 import com.sixgroup.avro.trade.TradeValue;
 import com.sixgroup.referencedata.domain.TradeVO;
+import com.sixgroup.referencedata.domain.TradesPageVO;
 import com.sixgroup.referencedata.infrastructure.controller.model.TradeRDTO;
+import com.sixgroup.referencedata.infrastructure.controller.model.TradesListRDTO;
 
-@Mapper
+@Mapper(uses = BaseMapper.class)
 public interface TradeMapper {
 
     TradeVO from(TradeRDTO tradeRDTO);
@@ -17,4 +19,8 @@ public interface TradeMapper {
     TradeKey keyFrom(TradeVO tradeVO);
 
     TradeValue valueFrom(TradeVO tradeVO);
+
+    TradesListRDTO fromPage(TradesPageVO tradesPageVO);
+
+    TradeVO from(TradeKey key, TradeValue value);
 }

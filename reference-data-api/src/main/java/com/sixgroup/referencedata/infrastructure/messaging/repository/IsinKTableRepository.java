@@ -1,6 +1,5 @@
 package com.sixgroup.referencedata.infrastructure.messaging.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -51,7 +50,7 @@ public class IsinKTableRepository {
 
         int fromIndex = (page - 1) * size;
         if (fromIndex >= totalRecords) {
-            return new IsinsPageVO(page, size, totalPages, totalRecords, new ArrayList<>());
+            return new IsinsPageVO(page, size, totalPages, totalRecords, List.of());
         }
 
         int toIndex = Math.min(fromIndex + size, totalRecords);

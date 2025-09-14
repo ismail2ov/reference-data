@@ -7,6 +7,7 @@ import com.sixgroup.avro.trade.TradeKey;
 import com.sixgroup.avro.trade.TradeValue;
 import com.sixgroup.referencedata.domain.TradeRepository;
 import com.sixgroup.referencedata.domain.TradeVO;
+import com.sixgroup.referencedata.domain.TradesPageVO;
 import com.sixgroup.referencedata.infrastructure.mapper.TradeMapper;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TradeKafkaRepository implements TradeRepository {
 
     private final KafkaTemplate<TradeKey, TradeValue> kafkaTemplate;
+    private final TradeConsumerRepository tradeConsumerRepository;
     private final TopicsConfiguration topicsConfiguration;
     private final TradeMapper tradeMapper;
 
@@ -28,6 +30,11 @@ public class TradeKafkaRepository implements TradeRepository {
         TradeValue value = tradeMapper.valueFrom(tradeVO);
         this.publishTrade(key, value);
         return tradeVO;
+    }
+
+    @Override
+    public TradesPageVO getTrades(Integer page, Integer size) {
+        return tradeConsumerRepository.getTrades(page, size);
     }
 
     private void publishTrade(TradeKey key, TradeValue value) {

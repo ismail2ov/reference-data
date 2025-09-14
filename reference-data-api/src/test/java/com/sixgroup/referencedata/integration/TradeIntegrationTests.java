@@ -5,8 +5,11 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +21,8 @@ import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -28,8 +33,12 @@ import com.sixgroup.avro.enriched.trade.EnrichedTradeKey;
 import com.sixgroup.avro.enriched.trade.EnrichedTradeValue;
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
+import com.sixgroup.avro.trade.TradeKey;
+import com.sixgroup.avro.trade.TradeType;
+import com.sixgroup.avro.trade.TradeValue;
 import com.sixgroup.referencedata.infrastructure.controller.model.TradeRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.TradeTypeRDTO;
+import com.sixgroup.referencedata.infrastructure.controller.model.TradesListRDTO;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.KafkaStreamsConfig;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 
@@ -38,6 +47,8 @@ import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfigura
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TradeIntegrationTests {
+
+    public static final String ISIN = "ES0B00152511";
 
     @Autowired
     TopicsConfiguration topicsConfiguration;
@@ -49,13 +60,23 @@ class TradeIntegrationTests {
     private KafkaTemplate<IsinDataKey, IsinDataValue> isinKafkaTemplate;
 
     @Autowired
+    private KafkaTemplate<TradeKey, TradeValue> tradeKafkaTemplate;
+
+    @Autowired
     private StreamsBuilderFactoryBean streamsBuilderFactoryBean;
+
+    private static final AtomicInteger counter = new AtomicInteger(1);
+
+    @DynamicPropertySource
+    static void registerKafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.kafka.bootstrap-servers", TestcontainersConfiguration.kafkaContainer::getBootstrapServers);
+        registry.add("spring.kafka.streams.application-id", () -> "test-streams-app");
+    }
 
     @Test
     void whenCreateNewTradeWithExistingIsinThenEnrichedTradeRecordIsCreated() {
-        String isin = "ES0B00152511";
 
-        publishIsinRecord(isin);
+        publishIsinRecord(ISIN);
 
         String tradeRef = "123456";
         Instant now = Instant.now();
@@ -66,7 +87,7 @@ class TradeIntegrationTests {
             .price(15203)
             .timestamp(now.toEpochMilli())
             .securityId((int) (Instant.now().toEpochMilli() % Integer.MAX_VALUE))
-            .isin(isin);
+            .isin(ISIN);
 
         ResponseEntity<TradeRDTO> response = testRestTemplate.postForEntity("/trades", newTrade, TradeRDTO.class);
 
@@ -79,8 +100,6 @@ class TradeIntegrationTests {
 
     @Test
     void whenCreateNewTradeWithNonExistingIsinThenEnrichedTradeRecordIsNotCreated() {
-        String isin = "ES0B00168210";
-
         String tradeRef = "987654";
         Instant now = Instant.now();
         TradeRDTO newTrade = new TradeRDTO()
@@ -90,7 +109,7 @@ class TradeIntegrationTests {
             .price(15203)
             .timestamp(now.toEpochMilli())
             .securityId((int) (Instant.now().toEpochMilli() % Integer.MAX_VALUE))
-            .isin(isin);
+            .isin(ISIN);
 
         ResponseEntity<TradeRDTO> response = testRestTemplate.postForEntity("/trades", newTrade, TradeRDTO.class);
 
@@ -99,6 +118,36 @@ class TradeIntegrationTests {
         Optional<EnrichedTradeValue> value = getFromStoreByKey(tradeRef);
 
         assertThat(value).isNotPresent();
+    }
+
+    @Test
+    void whenThereAreFiveDifferentTradesThenItReturnsAListOfIsins() {
+        publishIsinRecord(ISIN);
+
+        List<String> tradesRefList = List.of("256310", "256311", "256312", "256313", "256314");
+
+        List<TradeRDTO> expected = publishTradeRecords(tradesRefList, ISIN);
+
+        ResponseEntity<TradesListRDTO> response = testRestTemplate.getForEntity("/trades", TradesListRDTO.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getData()).containsAll(expected);
+    }
+
+    @Test
+    void whenThereIsTradesPageThenReturnsIt() {
+        publishIsinRecord(ISIN);
+
+        List<String> tradesRefList = List.of("256310", "256311", "256312", "256313", "256314");
+
+        publishTradeRecords(tradesRefList, ISIN);
+
+        ResponseEntity<TradesListRDTO> response = testRestTemplate.getForEntity("/trades?page=2&size=2", TradesListRDTO.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getData()).hasSize(2);
     }
 
     private void publishIsinRecord(String isin) {
@@ -120,6 +169,39 @@ class TradeIntegrationTests {
         EnrichedTradeValue value = keyValueStore.get(EnrichedTradeKey.newBuilder().setTradeRef(tradeRef).build());
 
         return Optional.ofNullable(value);
+    }
+
+    private List<TradeRDTO> publishTradeRecords(List<String> tradesRefList, String isin) {
+        List<TradeRDTO> tradesResponse = new ArrayList<>();
+
+        for (String tradeRef : tradesRefList) {
+            TradeKey tradeKey = TradeKey.newBuilder().setTradeRef(tradeRef).build();
+            TradeValue tradeValue = TradeValue.newBuilder()
+                .setSecurityId(counter.getAndIncrement())
+                .setTradeType(TradeType.VISIBLE_ORDER)
+                .setIsin(isin)
+                .setQuantity(1)
+                .setPrice(15203)
+                .setTimestamp(Instant.now().toEpochMilli())
+                .build();
+
+            tradeKafkaTemplate.send(topicsConfiguration.getTrades(), tradeKey, tradeValue);
+            TradeRDTO tradeRDTO = tradeRtoFrom(tradeKey, tradeValue);
+            tradesResponse.add(tradeRDTO);
+        }
+
+        return tradesResponse;
+    }
+
+    private TradeRDTO tradeRtoFrom(TradeKey tradeKey, TradeValue tradeValue) {
+        return new TradeRDTO()
+            .tradeRef(tradeKey.getTradeRef().toString())
+            .tradeType(TradeTypeRDTO.fromValue(tradeValue.getTradeType().name()))
+            .quantity(Math.toIntExact(tradeValue.getQuantity()))
+            .price(Math.toIntExact(tradeValue.getPrice()))
+            .timestamp(tradeValue.getTimestamp())
+            .securityId(tradeValue.getSecurityId())
+            .isin(tradeValue.getIsin().toString());
     }
 
 }

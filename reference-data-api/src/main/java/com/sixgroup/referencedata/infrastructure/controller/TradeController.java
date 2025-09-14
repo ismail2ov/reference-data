@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sixgroup.referencedata.application.TradeService;
 import com.sixgroup.referencedata.domain.TradeVO;
+import com.sixgroup.referencedata.domain.TradesPageVO;
 import com.sixgroup.referencedata.infrastructure.controller.api.TradesApi;
 import com.sixgroup.referencedata.infrastructure.controller.model.TradeRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.TradesListRDTO;
@@ -32,6 +33,9 @@ public class TradeController implements TradesApi {
 
     @Override
     public ResponseEntity<TradesListRDTO> getTrades(Integer page, Integer size) {
-        return null;
+        TradesPageVO tradesPageVO = tradeService.getTrades(page, size);
+        TradesListRDTO isinListRDTO = tradeMapper.fromPage(tradesPageVO);
+
+        return ResponseEntity.ok(isinListRDTO);
     }
 }
