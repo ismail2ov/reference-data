@@ -1,8 +1,8 @@
 package com.sixgroup.referencedata.application;
 
-import com.sixgroup.referencedata.domain.TradeRepository;
-import com.sixgroup.referencedata.domain.TradeVO;
-import com.sixgroup.referencedata.domain.TradesPageVO;
+import com.sixgroup.referencedata.domain.trade.TradeRepository;
+import com.sixgroup.referencedata.domain.trade.TradeVO;
+import com.sixgroup.referencedata.domain.trade.TradesPageVO;
 
 public class TradeService {
 

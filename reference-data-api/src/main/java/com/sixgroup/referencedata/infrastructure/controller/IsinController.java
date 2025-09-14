@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sixgroup.referencedata.application.IsinService;
-import com.sixgroup.referencedata.domain.IsinVO;
-import com.sixgroup.referencedata.domain.IsinsPageVO;
+import com.sixgroup.referencedata.domain.isin.IsinVO;
+import com.sixgroup.referencedata.domain.isin.IsinsPageVO;
 import com.sixgroup.referencedata.infrastructure.controller.api.IsinsApi;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinListRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;

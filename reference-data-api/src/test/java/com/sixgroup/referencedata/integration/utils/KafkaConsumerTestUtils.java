@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.integration;
+package com.sixgroup.referencedata.integration.utils;
 
 import java.time.Duration;
 import java.util.List;

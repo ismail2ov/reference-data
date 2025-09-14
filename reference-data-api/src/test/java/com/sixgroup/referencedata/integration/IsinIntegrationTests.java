@@ -26,6 +26,9 @@ import com.sixgroup.avro.isin.data.IsinDataValue;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinListRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
+import com.sixgroup.referencedata.integration.utils.KafkaConsumerTestUtils;
+import com.sixgroup.referencedata.integration.utils.KafkaConsumerTestUtilsConfig;
+import com.sixgroup.referencedata.integration.utils.TestcontainersConfiguration;
 
 @ActiveProfiles("test")
 @Import({TestcontainersConfiguration.class, KafkaConsumerTestUtilsConfig.class})

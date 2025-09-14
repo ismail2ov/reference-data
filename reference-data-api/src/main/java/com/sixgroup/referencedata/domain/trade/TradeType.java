@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.domain;
+package com.sixgroup.referencedata.domain.trade;
 
 public enum TradeType {
     VISIBLE_ORDER,      // 1 = trade against visible order quantity

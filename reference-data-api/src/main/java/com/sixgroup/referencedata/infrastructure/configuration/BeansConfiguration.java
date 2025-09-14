@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.sixgroup.referencedata.application.IsinService;
 import com.sixgroup.referencedata.application.TradeService;
-import com.sixgroup.referencedata.domain.IsinRepository;
-import com.sixgroup.referencedata.domain.TradeRepository;
+import com.sixgroup.referencedata.domain.isin.IsinRepository;
+import com.sixgroup.referencedata.domain.trade.TradeRepository;
 
 @Configuration
 public class BeansConfiguration {

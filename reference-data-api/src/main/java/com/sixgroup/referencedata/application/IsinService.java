@@ -1,8 +1,8 @@
 package com.sixgroup.referencedata.application;
 
-import com.sixgroup.referencedata.domain.IsinRepository;
-import com.sixgroup.referencedata.domain.IsinVO;
-import com.sixgroup.referencedata.domain.IsinsPageVO;
+import com.sixgroup.referencedata.domain.isin.IsinRepository;
+import com.sixgroup.referencedata.domain.isin.IsinVO;
+import com.sixgroup.referencedata.domain.isin.IsinsPageVO;
 
 public class IsinService {
 

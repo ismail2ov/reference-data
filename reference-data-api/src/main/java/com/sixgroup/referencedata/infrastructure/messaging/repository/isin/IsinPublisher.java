@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.infrastructure.messaging.repository;
+package com.sixgroup.referencedata.infrastructure.messaging.repository.isin;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Repository;

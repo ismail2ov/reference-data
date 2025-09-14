@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.domain;
+package com.sixgroup.referencedata.domain.trade;
 
 public interface TradeRepository {
 

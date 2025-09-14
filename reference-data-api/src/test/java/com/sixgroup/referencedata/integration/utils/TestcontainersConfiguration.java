@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.integration;
+package com.sixgroup.referencedata.integration.utils;
 
 import java.util.Map;
 
@@ -19,7 +19,7 @@ import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfigura
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfiguration {
 
-    static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:latest"));
+    public static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:latest"));
 
     static {
         kafkaContainer.start();

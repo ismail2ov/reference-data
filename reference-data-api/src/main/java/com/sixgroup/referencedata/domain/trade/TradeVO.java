@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.domain;
+package com.sixgroup.referencedata.domain.trade;
 
 public record TradeVO(String tradeRef,
                       int securityId,

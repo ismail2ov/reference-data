@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.infrastructure.messaging.repository;
+package com.sixgroup.referencedata.infrastructure.messaging.repository.isin;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,8 +17,8 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
-import com.sixgroup.referencedata.domain.IsinVO;
-import com.sixgroup.referencedata.domain.IsinsPageVO;
+import com.sixgroup.referencedata.domain.isin.IsinVO;
+import com.sixgroup.referencedata.domain.isin.IsinsPageVO;
 import com.sixgroup.referencedata.infrastructure.mapper.IsinMapper;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.KafkaStreamsConfig;
 

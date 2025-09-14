@@ -1,13 +1,13 @@
-package com.sixgroup.referencedata.infrastructure.messaging.repository;
+package com.sixgroup.referencedata.infrastructure.messaging.repository.isin;
 
 import org.springframework.stereotype.Repository;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
-import com.sixgroup.referencedata.domain.IsinRepository;
-import com.sixgroup.referencedata.domain.IsinVO;
-import com.sixgroup.referencedata.domain.IsinsPageVO;
 import com.sixgroup.referencedata.domain.exception.IsinNotFoundException;
+import com.sixgroup.referencedata.domain.isin.IsinRepository;
+import com.sixgroup.referencedata.domain.isin.IsinVO;
+import com.sixgroup.referencedata.domain.isin.IsinsPageVO;
 import com.sixgroup.referencedata.infrastructure.mapper.IsinMapper;
 
 import lombok.RequiredArgsConstructor;

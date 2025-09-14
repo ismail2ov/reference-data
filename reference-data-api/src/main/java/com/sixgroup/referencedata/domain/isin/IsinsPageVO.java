@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.domain;
+package com.sixgroup.referencedata.domain.isin;
 
 import java.util.List;
 

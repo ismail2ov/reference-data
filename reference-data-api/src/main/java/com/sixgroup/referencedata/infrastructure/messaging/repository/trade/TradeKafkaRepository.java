@@ -1,13 +1,13 @@
-package com.sixgroup.referencedata.infrastructure.messaging.repository;
+package com.sixgroup.referencedata.infrastructure.messaging.repository.trade;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.sixgroup.avro.trade.TradeKey;
 import com.sixgroup.avro.trade.TradeValue;
-import com.sixgroup.referencedata.domain.TradeRepository;
-import com.sixgroup.referencedata.domain.TradeVO;
-import com.sixgroup.referencedata.domain.TradesPageVO;
+import com.sixgroup.referencedata.domain.trade.TradeRepository;
+import com.sixgroup.referencedata.domain.trade.TradeVO;
+import com.sixgroup.referencedata.domain.trade.TradesPageVO;
 import com.sixgroup.referencedata.infrastructure.mapper.TradeMapper;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 

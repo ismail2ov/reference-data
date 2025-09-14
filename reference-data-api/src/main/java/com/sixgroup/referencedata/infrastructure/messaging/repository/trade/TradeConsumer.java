@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.infrastructure.messaging.repository;
+package com.sixgroup.referencedata.infrastructure.messaging.repository.trade;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ import org.apache.kafka.common.TopicPartition;
 
 import com.sixgroup.avro.trade.TradeKey;
 import com.sixgroup.avro.trade.TradeValue;
-import com.sixgroup.referencedata.domain.TradeVO;
-import com.sixgroup.referencedata.domain.TradesPageVO;
+import com.sixgroup.referencedata.domain.trade.TradeVO;
+import com.sixgroup.referencedata.domain.trade.TradesPageVO;
 import com.sixgroup.referencedata.infrastructure.mapper.TradeMapper;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 

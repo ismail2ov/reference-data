@@ -41,6 +41,8 @@ import com.sixgroup.referencedata.infrastructure.controller.model.TradeTypeRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.TradesListRDTO;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.KafkaStreamsConfig;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
+import com.sixgroup.referencedata.integration.utils.KafkaConsumerTestUtilsConfig;
+import com.sixgroup.referencedata.integration.utils.TestcontainersConfiguration;
 
 @ActiveProfiles("test")
 @Import({TestcontainersConfiguration.class, KafkaConsumerTestUtilsConfig.class})

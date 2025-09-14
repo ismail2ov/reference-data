@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
-import com.sixgroup.referencedata.domain.IsinVO;
-import com.sixgroup.referencedata.domain.IsinsPageVO;
+import com.sixgroup.referencedata.domain.isin.IsinVO;
+import com.sixgroup.referencedata.domain.isin.IsinsPageVO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinListRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
 

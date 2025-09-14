@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 
 import com.sixgroup.avro.trade.TradeKey;
 import com.sixgroup.avro.trade.TradeValue;
-import com.sixgroup.referencedata.domain.TradeVO;
-import com.sixgroup.referencedata.domain.TradesPageVO;
+import com.sixgroup.referencedata.domain.trade.TradeVO;
+import com.sixgroup.referencedata.domain.trade.TradesPageVO;
 import com.sixgroup.referencedata.infrastructure.controller.model.TradeRDTO;
 import com.sixgroup.referencedata.infrastructure.controller.model.TradesListRDTO;
 
