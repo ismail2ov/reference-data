@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ class TradeIntegrationTests {
     }
 
     @Test
-    void whenCreateNewTradeWithExistingIsinThenEnrichedTradeRecordIsCreated() {
+    void whenCreateNewTradeWithExistingIsinThenEnrichedTradeRecordIsCreated() throws InterruptedException {
 
         publishIsinRecord(ISIN);
 
@@ -94,6 +95,8 @@ class TradeIntegrationTests {
         ResponseEntity<TradeRDTO> response = testRestTemplate.postForEntity("/trades", newTrade, TradeRDTO.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        TimeUnit.SECONDS.sleep(1);
 
         Optional<EnrichedTradeValue> value = getFromStoreByKey(tradeRef);
 
