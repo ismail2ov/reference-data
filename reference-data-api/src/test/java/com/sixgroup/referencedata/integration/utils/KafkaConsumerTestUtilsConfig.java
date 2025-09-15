@@ -23,7 +23,7 @@ import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfigura
 public class KafkaConsumerTestUtilsConfig {
 
     @Bean(destroyMethod = "close")
-    @DependsOn({"kafkaContainer", "isinTopic"})
+    @DependsOn("isinTopic")
     public KafkaConsumerTestUtils<IsinDataKey, IsinDataValue> isinConsumer(
         ConsumerFactory<IsinDataKey, IsinDataValue> consumerFactory,
         TopicsConfiguration topicsConfiguration
@@ -34,7 +34,7 @@ public class KafkaConsumerTestUtilsConfig {
     }
 
     @Bean(destroyMethod = "close")
-    @DependsOn({"kafkaContainer", "tradesTopic"})
+    @DependsOn("tradesTopic")
     public KafkaConsumerTestUtils<TradeKey, TradeValue> tradesConsumer(
         ConsumerFactory<TradeKey, TradeValue> consumerFactory,
         TopicsConfiguration topicsConfiguration
@@ -45,7 +45,7 @@ public class KafkaConsumerTestUtilsConfig {
     }
 
     @Bean(destroyMethod = "close")
-    @DependsOn({"kafkaContainer", "enrichedTradesTopic"})
+    @DependsOn("enrichedTradesTopic")
     public KafkaConsumerTestUtils<EnrichedTradeKey, EnrichedTradeValue> enrichedTradesConsumer(
         ConsumerFactory<EnrichedTradeKey, EnrichedTradeValue> consumerFactory,
         TopicsConfiguration topicsConfiguration

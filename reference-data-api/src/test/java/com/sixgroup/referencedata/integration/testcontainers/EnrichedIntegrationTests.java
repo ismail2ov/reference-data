@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.integration;
+package com.sixgroup.referencedata.integration.testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
@@ -26,10 +26,10 @@ import com.sixgroup.avro.trade.TradeValue;
 import com.sixgroup.referencedata.infrastructure.controller.model.EnrichedTradeRDTO;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 import com.sixgroup.referencedata.integration.utils.KafkaConsumerTestUtilsConfig;
-import com.sixgroup.referencedata.integration.utils.TestcontainersConfiguration;
+import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 
 @ActiveProfiles("test")
-@Import({TestcontainersConfiguration.class, KafkaConsumerTestUtilsConfig.class})
+@Import({TestcontainersConfiguration.class, TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class EnrichedIntegrationTests {

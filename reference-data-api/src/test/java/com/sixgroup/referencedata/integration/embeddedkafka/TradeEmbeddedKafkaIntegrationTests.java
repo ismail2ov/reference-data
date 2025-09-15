@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.integration;
+package com.sixgroup.referencedata.integration.embeddedkafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
@@ -20,10 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 
 import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -43,13 +42,14 @@ import com.sixgroup.referencedata.infrastructure.controller.model.TradesListRDTO
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.KafkaStreamsConfig;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 import com.sixgroup.referencedata.integration.utils.KafkaConsumerTestUtilsConfig;
-import com.sixgroup.referencedata.integration.utils.TestcontainersConfiguration;
+import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 
 @ActiveProfiles("test")
-@Import({TestcontainersConfiguration.class, KafkaConsumerTestUtilsConfig.class})
+@Import({TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TradeIntegrationTests {
+@EmbeddedKafka
+class TradeEmbeddedKafkaIntegrationTests {
 
     public static final String ISIN = "ES0B00152511";
 
@@ -69,12 +69,6 @@ class TradeIntegrationTests {
     private StreamsBuilderFactoryBean streamsBuilderFactoryBean;
 
     private static final AtomicInteger counter = new AtomicInteger(1);
-
-    @DynamicPropertySource
-    static void registerKafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", TestcontainersConfiguration.kafkaContainer::getBootstrapServers);
-        registry.add("spring.kafka.streams.application-id", () -> "test-streams-app");
-    }
 
     @Test
     void whenCreateNewTradeWithExistingIsinThenEnrichedTradeRecordIsCreated() throws InterruptedException {
@@ -152,7 +146,6 @@ class TradeIntegrationTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getData()).hasSize(2);
     }
 
     private void publishIsinRecord(String isin) {

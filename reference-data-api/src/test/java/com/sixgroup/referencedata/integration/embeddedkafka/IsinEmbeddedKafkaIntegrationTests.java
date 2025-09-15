@@ -1,4 +1,4 @@
-package com.sixgroup.referencedata.integration;
+package com.sixgroup.referencedata.integration.embeddedkafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -28,13 +29,14 @@ import com.sixgroup.referencedata.infrastructure.controller.model.IsinRDTO;
 import com.sixgroup.referencedata.infrastructure.messaging.kafka.TopicsConfiguration;
 import com.sixgroup.referencedata.integration.utils.KafkaConsumerTestUtils;
 import com.sixgroup.referencedata.integration.utils.KafkaConsumerTestUtilsConfig;
-import com.sixgroup.referencedata.integration.utils.TestcontainersConfiguration;
+import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 
 @ActiveProfiles("test")
-@Import({TestcontainersConfiguration.class, KafkaConsumerTestUtilsConfig.class})
+@Import({TestTopicsConfiguration.class, TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class IsinIntegrationTests {
+@EmbeddedKafka
+class IsinEmbeddedKafkaIntegrationTests {
 
     @Autowired
     TopicsConfiguration topicsConfiguration;
