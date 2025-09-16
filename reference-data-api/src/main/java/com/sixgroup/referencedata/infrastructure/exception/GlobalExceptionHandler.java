@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
+import com.sixgroup.referencedata.domain.exception.EnrichedTradeNotFoundException;
 import com.sixgroup.referencedata.domain.exception.IsinNotFoundException;
 import com.sixgroup.referencedata.infrastructure.controller.model.ErrorResponseRDTO;
 
@@ -17,7 +18,7 @@ public class GlobalExceptionHandler {
         return this.buildResponse(HttpStatus.BAD_REQUEST, e);
     }
 
-    @ExceptionHandler(IsinNotFoundException.class)
+    @ExceptionHandler({IsinNotFoundException.class, EnrichedTradeNotFoundException.class})
     public ResponseEntity<ErrorResponseRDTO> handleNotFound(Exception e) {
         return this.buildResponse(HttpStatus.NOT_FOUND, e);
     }
