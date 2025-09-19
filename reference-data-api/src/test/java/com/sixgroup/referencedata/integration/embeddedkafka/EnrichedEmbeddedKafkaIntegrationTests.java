@@ -56,7 +56,7 @@ class EnrichedEmbeddedKafkaIntegrationTests {
         publishIsinRecord(isin);
         publishTradeRecords(tradeRef, 296399, isin);
 
-        TimeUnit.SECONDS.sleep(1);
+        TimeUnit.SECONDS.sleep(2);
 
         ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
 
