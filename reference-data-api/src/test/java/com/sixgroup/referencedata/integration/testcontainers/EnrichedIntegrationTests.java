@@ -5,6 +5,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,12 +48,14 @@ class EnrichedIntegrationTests {
     private KafkaTemplate<TradeKey, TradeValue> tradeKafkaTemplate;
 
     @Test
-    void whenEnrichedTradeExistsThenItReturns() {
+    void whenEnrichedTradeExistsThenItReturns() throws InterruptedException {
         String isin = "ES0B00157734";
         String tradeRef = "296308";
 
         publishIsinRecord(isin);
         publishTradeRecords(tradeRef, 296399, isin);
+
+        TimeUnit.SECONDS.sleep(1);
 
         ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
 

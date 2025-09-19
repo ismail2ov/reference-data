@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -71,10 +72,12 @@ class IsinEmbeddedKafkaIntegrationTests {
     }
 
     @Test
-    void whenIsinExistsThenReturnIsin() {
+    void whenIsinExistsThenReturnIsin() throws InterruptedException {
         String isin = "ES0B00157734";
 
         IsinRDTO newIsin = publishIsinRecord(isin);
+
+        TimeUnit.SECONDS.sleep(1);
 
         ResponseEntity<IsinRDTO> response = testRestTemplate.getForEntity("/isins/" + isin, IsinRDTO.class);
 
