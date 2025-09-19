@@ -24,7 +24,4 @@ jobs:
         run: mvn -pl reference-data-api spotless:check
 
       - name: Build with Maven
-        run: mvn -B install --file pom.xml -Dspring.profiles.active=ci -DskipTests
-
-      - name: Run tests
-        run: mvn -B -pl reference-data-api test -e
+        run: mvn -B package --file pom.xml -Dspring.profiles.active=ci
