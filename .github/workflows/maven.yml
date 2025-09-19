@@ -1,48 +1,45 @@
-name: Java CI with Maven
+name: CI Optimized
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
-  test:
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Check system resources before tests
-        run: |
-          echo "=== CPU INFO ==="
-          lscpu
-          echo ""
-          echo "=== MEMORY INFO ==="
-          free -h
-          echo ""
-          echo "=== DISK INFO ==="
-          df -h
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
 
-      - name: Run tests
-        run: |
-          mvn -pl reference-data-api test -e  
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
 
-      - name: Check memory after tests
-        if: always()
-        run: |
-          echo "=== MEMORY USAGE AFTER TESTS ==="
-          free -h
+    - name: Preload Maven dependencies
+      run: mvn -B dependency:go-offline
 
-      - name: Fail if memory is too low
-        if: always()
-        run: |
-          FREE_MB=$(free -m | awk '/Mem:/ {print $7}')
-          echo "Free memory after tests: ${FREE_MB} MB"
-          if [ "$FREE_MB" -lt 2048 ]; then
-            echo "❌ Runner does not have enough memory (less than 2 GB free)"
-            exit 1
-          else
-            echo "✅ Memory is sufficient"
-          fi
+    - name: Spotless check
+      run: mvn -pl reference-data-api spotless:check
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml -Dspring.profiles.active=ci -DskipTests
+
+    - name: Run tests
+      run: mvn -B -pl reference-data-api test -e
