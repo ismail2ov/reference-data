@@ -27,7 +27,7 @@ jobs:
 
       - name: Run tests
         run: |
-          ./gradlew clean test --stacktrace
+          mvn -pl reference-data-api test -e  
 
       - name: Check memory after tests
         if: always()
