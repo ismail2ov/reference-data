@@ -27,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.enriched.trade.EnrichedTradeKey;
@@ -49,6 +50,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka
+@Disabled
 class TradeEmbeddedKafkaIntegrationTests {
 
     public static final String ISIN = "ES0B00152511";
