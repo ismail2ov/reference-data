@@ -103,12 +103,14 @@ class IsinEmbeddedKafkaIntegrationTests {
     }
 
     @Test
-    void whenThereIsIsinPageThenReturnsIt() {
+    void whenThereIsIsinPageThenReturnsIt() throws InterruptedException {
         publishIsinRecord("ES0B00165083");
         publishIsinRecord("ES0B00164946");
         publishIsinRecord("ES0B00165067");
         publishIsinRecord("ES0B00164920");
         publishIsinRecord("ES0B00166289");
+
+        TimeUnit.SECONDS.sleep(1);
 
         ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins?page=2&size=2", IsinListRDTO.class);
 
