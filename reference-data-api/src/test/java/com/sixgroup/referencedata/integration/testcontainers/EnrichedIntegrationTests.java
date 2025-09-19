@@ -1,11 +1,12 @@
 package com.sixgroup.referencedata.integration.testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,20 +49,23 @@ class EnrichedIntegrationTests {
     private KafkaTemplate<TradeKey, TradeValue> tradeKafkaTemplate;
 
     @Test
-    void whenEnrichedTradeExistsThenItReturns() throws InterruptedException {
+    void whenEnrichedTradeExistsThenItReturns() {
         String isin = "ES0B00157734";
         String tradeRef = "296308";
 
         publishIsinRecord(isin);
         publishTradeRecords(tradeRef, 296399, isin);
 
-        TimeUnit.SECONDS.sleep(5);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
 
-        ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getTradeRef()).isEqualTo(tradeRef);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getTradeRef()).isEqualTo(tradeRef);
+            });
     }
 
     private void publishIsinRecord(String isin) {
@@ -70,6 +74,7 @@ class EnrichedIntegrationTests {
             .build();
 
         isinKafkaTemplate.send(topicsConfiguration.getIsin(), isinDataKey, isinDataValue);
+        isinKafkaTemplate.flush();
     }
 
     private void publishTradeRecords(String tradeRef, int securityId, String isin) {
@@ -84,6 +89,7 @@ class EnrichedIntegrationTests {
             .build();
 
         tradeKafkaTemplate.send(topicsConfiguration.getTrades(), tradeKey, tradeValue);
+        tradeKafkaTemplate.flush();
     }
 
 }
