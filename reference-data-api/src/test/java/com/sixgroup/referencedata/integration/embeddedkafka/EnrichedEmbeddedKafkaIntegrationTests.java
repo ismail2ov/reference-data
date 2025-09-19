@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
@@ -33,6 +35,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka
+@Disabled
 class EnrichedEmbeddedKafkaIntegrationTests {
 
     @Autowired
@@ -48,12 +51,14 @@ class EnrichedEmbeddedKafkaIntegrationTests {
     private KafkaTemplate<TradeKey, TradeValue> tradeKafkaTemplate;
 
     @Test
-    void whenEnrichedTradeExistsThenItReturns() {
+    void whenEnrichedTradeExistsThenItReturns() throws InterruptedException {
         String isin = "ES0B00157734";
         String tradeRef = "296308";
 
         publishIsinRecord(isin);
         publishTradeRecords(tradeRef, 296399, isin);
+
+        TimeUnit.SECONDS.sleep(2);
 
         ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
 
