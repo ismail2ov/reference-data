@@ -10,13 +10,13 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.TestInputTopic;
 import org.apache.kafka.streams.TopologyTestDriver;
+import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.apache.kafka.streams.state.KeyValueIterator;
 import com.sixgroup.avro.enriched.trade.EnrichedTradeKey;
 import com.sixgroup.avro.enriched.trade.EnrichedTradeValue;
 import com.sixgroup.avro.enriched.trade.TradeType;
