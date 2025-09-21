@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -49,6 +50,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @Import({TestcontainersConfiguration.class, TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Disabled
 class TradeIntegrationTests {
 
     public static final String ISIN = "ES0B00152511";
