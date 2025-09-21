@@ -1,6 +1,7 @@
 package com.sixgroup.referencedata.integration.embeddedkafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 import java.time.Duration;
@@ -107,11 +108,16 @@ class IsinEmbeddedKafkaIntegrationTests {
         publishIsinRecord("ES0B00164920");
         publishIsinRecord("ES0B00166289");
 
-        ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins?page=2&size=2", IsinListRDTO.class);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins?page=2&size=2", IsinListRDTO.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getData()).hasSize(2);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getData()).hasSize(2);
+            });
     }
 
     private IsinRDTO publishIsinRecord(String isin) {
