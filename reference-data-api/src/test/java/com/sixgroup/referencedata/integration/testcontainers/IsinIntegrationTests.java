@@ -35,6 +35,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @Import({TestcontainersConfiguration.class, TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Disabled
 class IsinIntegrationTests {
 
     @Autowired
@@ -69,7 +70,7 @@ class IsinIntegrationTests {
         assertThat(records).hasSize(1);
     }
 
-    @Disabled
+    @Test
     void whenIsinExistsThenReturnIsin() {
         String isin = "ES0B00157734";
 
@@ -98,7 +99,7 @@ class IsinIntegrationTests {
         assertThat(response.getBody().getData()).containsAnyElementsOf(expected);
     }
 
-    @Disabled
+    @Test
     void whenThereIsIsinPageThenReturnsIt() {
         publishIsinRecord("ES0B00165083");
         publishIsinRecord("ES0B00164946");

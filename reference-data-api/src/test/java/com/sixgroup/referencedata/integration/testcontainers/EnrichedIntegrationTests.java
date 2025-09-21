@@ -17,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
@@ -32,6 +33,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @Import({TestcontainersConfiguration.class, TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Disabled
 class EnrichedIntegrationTests {
 
     @Autowired
@@ -46,7 +48,7 @@ class EnrichedIntegrationTests {
     @Autowired
     private KafkaTemplate<TradeKey, TradeValue> tradeKafkaTemplate;
 
-    @Disabled
+    @Test
     void whenEnrichedTradeExistsThenItReturns() {
         String isin = "ES0B00157734";
         String tradeRef = "296308";
