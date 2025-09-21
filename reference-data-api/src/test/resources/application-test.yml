@@ -29,5 +29,7 @@ topics:
 
 logging:
   level:
-    org.apache.kafka: INFO
-    org.springframework.kafka: DEBUG
+    root: WARN
+    org.apache.kafka: WARN
+    org.springframework: WARN
+    com.sixgroup: INFO

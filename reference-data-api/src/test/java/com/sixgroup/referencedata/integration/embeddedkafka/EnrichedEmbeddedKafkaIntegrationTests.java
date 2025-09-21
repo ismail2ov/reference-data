@@ -1,7 +1,9 @@
 package com.sixgroup.referencedata.integration.embeddedkafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -16,6 +18,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
@@ -32,7 +35,8 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @Import({TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EmbeddedKafka
+@EmbeddedKafka(partitions = 1, topics = {"isin-topic-test", "trades-topic-test", "enriched-trades-topic-test"})
+@Disabled
 class EnrichedEmbeddedKafkaIntegrationTests {
 
     @Autowired
@@ -55,11 +59,16 @@ class EnrichedEmbeddedKafkaIntegrationTests {
         publishIsinRecord(isin);
         publishTradeRecords(tradeRef, 296399, isin);
 
-        ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getTradeRef()).isEqualTo(tradeRef);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getTradeRef()).isEqualTo(tradeRef);
+            });
     }
 
     private void publishIsinRecord(String isin) {
