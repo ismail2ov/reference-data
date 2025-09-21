@@ -17,7 +17,7 @@ public class TestTopicsConfiguration {
 
     @Bean
     NewTopic tradesTopic(TopicsConfiguration topicsConfiguration) {
-        return buildTopicWith(topicsConfiguration.getTrades(), 3);
+        return buildTopicWith(topicsConfiguration.getTrades(), 1);
     }
 
     @Bean
