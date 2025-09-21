@@ -1,7 +1,9 @@
 package com.sixgroup.referencedata.integration.embeddedkafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -55,11 +57,16 @@ class EnrichedEmbeddedKafkaIntegrationTests {
         publishIsinRecord(isin);
         publishTradeRecords(tradeRef, 296399, isin);
 
-        ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getTradeRef()).isEqualTo(tradeRef);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getTradeRef()).isEqualTo(tradeRef);
+            });
     }
 
     private void publishIsinRecord(String isin) {
