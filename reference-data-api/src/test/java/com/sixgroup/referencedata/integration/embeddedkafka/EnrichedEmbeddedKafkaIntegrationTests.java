@@ -34,7 +34,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @Import({TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EmbeddedKafka
+@EmbeddedKafka(partitions = 1, topics = {"isin-topic-test", "trades-topic-test", "enriched-trades-topic-test"})
 class EnrichedEmbeddedKafkaIntegrationTests {
 
     @Autowired
