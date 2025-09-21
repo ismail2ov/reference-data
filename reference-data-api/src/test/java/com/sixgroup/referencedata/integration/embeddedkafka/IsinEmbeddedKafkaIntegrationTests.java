@@ -20,7 +20,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
@@ -71,7 +70,7 @@ class IsinEmbeddedKafkaIntegrationTests {
         assertThat(records).hasSize(1);
     }
 
-    @Disabled
+    @Test
     void whenIsinExistsThenReturnIsin() {
         String isin = "ES0B00157734";
 
@@ -100,7 +99,7 @@ class IsinEmbeddedKafkaIntegrationTests {
         assertThat(response.getBody().getData()).containsAnyElementsOf(expected);
     }
 
-    @Disabled
+    @Test
     void whenThereIsIsinPageThenReturnsIt() {
         publishIsinRecord("ES0B00165083");
         publishIsinRecord("ES0B00164946");
