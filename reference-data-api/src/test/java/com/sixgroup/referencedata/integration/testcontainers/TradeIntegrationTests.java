@@ -1,15 +1,16 @@
 package com.sixgroup.referencedata.integration.testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.enriched.trade.EnrichedTradeKey;
@@ -50,7 +50,6 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @Import({TestcontainersConfiguration.class, TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled
 class TradeIntegrationTests {
 
     public static final String ISIN = "ES0B00152511";
@@ -79,7 +78,7 @@ class TradeIntegrationTests {
     }
 
     @Test
-    void whenCreateNewTradeWithExistingIsinThenEnrichedTradeRecordIsCreated() throws InterruptedException {
+    void whenCreateNewTradeWithExistingIsinThenEnrichedTradeRecordIsCreated() {
 
         publishIsinRecord(ISIN);
 
@@ -98,16 +97,23 @@ class TradeIntegrationTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-        TimeUnit.SECONDS.sleep(1);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollDelay(Duration.ofSeconds(1))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
 
-        Optional<EnrichedTradeValue> value = getFromStoreByKey(tradeRef);
+                Optional<EnrichedTradeValue> value = getFromStoreByKey(tradeRef);
 
-        assertThat(value).isPresent();
+                assertThat(value).isPresent();
+            });
     }
 
     @Test
     void whenCreateNewTradeWithNonExistingIsinThenEnrichedTradeRecordIsNotCreated() {
         String tradeRef = "987654";
+        String isin = "ES0B00137546";
+
         Instant now = Instant.now();
         TradeRDTO newTrade = new TradeRDTO()
             .tradeRef(tradeRef)
@@ -116,7 +122,7 @@ class TradeIntegrationTests {
             .price(15203)
             .timestamp(now.toEpochMilli())
             .securityId((int) (Instant.now().toEpochMilli() % Integer.MAX_VALUE))
-            .isin(ISIN);
+            .isin(isin);
 
         ResponseEntity<TradeRDTO> response = testRestTemplate.postForEntity("/trades", newTrade, TradeRDTO.class);
 
@@ -135,11 +141,17 @@ class TradeIntegrationTests {
 
         List<TradeRDTO> expected = publishTradeRecords(tradesRefList, ISIN);
 
-        ResponseEntity<TradesListRDTO> response = testRestTemplate.getForEntity("/trades", TradesListRDTO.class);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollInterval(Duration.ofSeconds(1))
+            .pollDelay(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<TradesListRDTO> response = testRestTemplate.getForEntity("/trades", TradesListRDTO.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getData()).containsAll(expected);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getData()).containsAll(expected);
+            });
     }
 
     @Test
@@ -150,11 +162,17 @@ class TradeIntegrationTests {
 
         publishTradeRecords(tradesRefList, ISIN);
 
-        ResponseEntity<TradesListRDTO> response = testRestTemplate.getForEntity("/trades?page=2&size=2", TradesListRDTO.class);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollInterval(Duration.ofSeconds(1))
+            .pollDelay(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<TradesListRDTO> response = testRestTemplate.getForEntity("/trades?page=2&size=2", TradesListRDTO.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getData()).hasSize(2);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getData()).hasSize(2);
+            });
     }
 
     private void publishIsinRecord(String isin) {
