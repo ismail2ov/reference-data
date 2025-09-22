@@ -29,6 +29,8 @@ import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.kafka.KafkaContainer;
 
 import com.sixgroup.avro.enriched.trade.EnrichedTradeKey;
 import com.sixgroup.avro.enriched.trade.EnrichedTradeValue;
@@ -70,9 +72,12 @@ class TradeIntegrationTests {
 
     private static final AtomicInteger counter = new AtomicInteger(1);
 
+    @Container
+    static KafkaContainer kafkaContainer = TestcontainersConfiguration.kafkaContainer;
+
     @DynamicPropertySource
     static void registerKafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", TestcontainersConfiguration.kafkaContainer::getBootstrapServers);
+        registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
         registry.add("spring.kafka.streams.application-id", () -> "test-streams-app");
     }
 

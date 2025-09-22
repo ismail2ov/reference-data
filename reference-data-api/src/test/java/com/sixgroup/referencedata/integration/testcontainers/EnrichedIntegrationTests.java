@@ -16,8 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 import org.junit.jupiter.api.Test;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.kafka.KafkaContainer;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
 import com.sixgroup.avro.isin.data.IsinDataValue;
@@ -46,6 +50,15 @@ class EnrichedIntegrationTests {
 
     @Autowired
     private KafkaTemplate<TradeKey, TradeValue> tradeKafkaTemplate;
+
+    @Container
+    static KafkaContainer kafkaContainer = TestcontainersConfiguration.kafkaContainer;
+
+    @DynamicPropertySource
+    static void registerKafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
+        registry.add("spring.kafka.streams.application-id", () -> "test-streams-app");
+    }
 
     @Test
     void whenEnrichedTradeExistsThenItReturns() {
