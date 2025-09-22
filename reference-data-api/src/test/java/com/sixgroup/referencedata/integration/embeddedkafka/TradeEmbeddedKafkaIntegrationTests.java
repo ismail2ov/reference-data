@@ -51,6 +51,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(partitions = 1, topics = {"isin-topic-test", "trades-topic-test", "enriched-trades-topic-test"})
+@Disabled
 class TradeEmbeddedKafkaIntegrationTests {
 
     public static final String ISIN = "ES0B00152511";

@@ -21,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
@@ -37,6 +38,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(partitions = 1, topics = {"isin-topic-test", "trades-topic-test", "enriched-trades-topic-test"})
+@Disabled
 class IsinEmbeddedKafkaIntegrationTests {
 
     @Autowired

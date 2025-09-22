@@ -1,7 +1,7 @@
 package com.sixgroup.referencedata.integration.testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+import static org.awaitility.Awaitility.await;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -19,7 +19,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.sixgroup.avro.isin.data.IsinDataKey;
@@ -33,9 +32,8 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 
 @ActiveProfiles("test")
 @Import({TestcontainersConfiguration.class, TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
+@DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled
 class IsinIntegrationTests {
 
     @Autowired
@@ -65,9 +63,14 @@ class IsinIntegrationTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(Objects.requireNonNull(response.getHeaders().get("location")).getFirst()).isEqualTo("/isins/" + isin);
 
-        List<ConsumerRecord<IsinDataKey, IsinDataValue>> records = isinConsumer.findAllRecordsByKey(isin, Duration.ofSeconds(10));
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                List<ConsumerRecord<IsinDataKey, IsinDataValue>> records = isinConsumer.findAllRecordsByKey(isin, Duration.ofSeconds(10));
 
-        assertThat(records).hasSize(1);
+                assertThat(records).hasSize(1);
+            });
     }
 
     @Test
@@ -76,10 +79,16 @@ class IsinIntegrationTests {
 
         IsinRDTO newIsin = publishIsinRecord(isin);
 
-        ResponseEntity<IsinRDTO> response = testRestTemplate.getForEntity("/isins/" + isin, IsinRDTO.class);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollDelay(Duration.ofSeconds(1))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<IsinRDTO> response = testRestTemplate.getForEntity("/isins/" + isin, IsinRDTO.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody()).isEqualTo(newIsin);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+                assertThat(response.getBody()).isEqualTo(newIsin);
+            });
     }
 
     @Test
@@ -92,11 +101,17 @@ class IsinIntegrationTests {
         );
         publishIsinRecord("ES0B00152511");
 
-        ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins", IsinListRDTO.class);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollDelay(Duration.ofSeconds(1))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins", IsinListRDTO.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getData()).containsAnyElementsOf(expected);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getData()).containsAnyElementsOf(expected);
+            });
     }
 
     @Test
@@ -107,11 +122,17 @@ class IsinIntegrationTests {
         publishIsinRecord("ES0B00164920");
         publishIsinRecord("ES0B00166289");
 
-        ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins?page=2&size=2", IsinListRDTO.class);
+        await()
+            .atMost(Duration.ofSeconds(20))
+            .pollDelay(Duration.ofSeconds(1))
+            .pollInterval(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                ResponseEntity<IsinListRDTO> response = testRestTemplate.getForEntity("/isins?page=2&size=2", IsinListRDTO.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getData()).hasSize(2);
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getData()).hasSize(2);
+            });
     }
 
     private IsinRDTO publishIsinRecord(String isin) {
