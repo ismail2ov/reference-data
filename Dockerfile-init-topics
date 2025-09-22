@@ -1,0 +1,5 @@
+FROM confluentinc/cp-kafka:8.0.0
+
+COPY --chmod=0755 scripts/init-topics.sh /usr/local/bin/init-topics.sh
+
+ENTRYPOINT ["sh", "-c", "/usr/local/bin/init-topics.sh"]

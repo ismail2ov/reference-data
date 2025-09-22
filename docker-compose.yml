@@ -53,9 +53,8 @@ services:
 
   init-topics:
     container_name: init-topics
-    image: confluentinc/cp-kafka:8.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile-init-topics
     depends_on:
       - broker
-    volumes:
-      - ./scripts/init-topics.sh:/init-topics.sh
-    entrypoint: [ "sh", "-c", "/init-topics.sh" ]
