@@ -2,7 +2,6 @@ package com.sixgroup.referencedata.integration.testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -48,7 +47,7 @@ import com.sixgroup.referencedata.integration.utils.TestTopicsConfiguration;
 
 @ActiveProfiles("test")
 @Import({TestcontainersConfiguration.class, TestTopicsConfiguration.class, KafkaConsumerTestUtilsConfig.class})
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
+@DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TradeIntegrationTests {
 
