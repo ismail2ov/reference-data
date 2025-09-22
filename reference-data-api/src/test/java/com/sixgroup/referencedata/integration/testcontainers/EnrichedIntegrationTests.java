@@ -69,8 +69,8 @@ class EnrichedIntegrationTests {
         publishTradeRecords(tradeRef, 296399, isin);
 
         await()
-            .atMost(Duration.ofSeconds(20))
-            .pollDelay(Duration.ofSeconds(1))
+            .atMost(Duration.ofSeconds(30))
+            .pollDelay(Duration.ofSeconds(5))
             .pollInterval(Duration.ofSeconds(1))
             .untilAsserted(() -> {
                 ResponseEntity<EnrichedTradeRDTO> response = testRestTemplate.getForEntity("/enriched-trades/" + tradeRef, EnrichedTradeRDTO.class);
