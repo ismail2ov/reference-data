@@ -187,12 +187,35 @@ The system uses three main Kafka topics:
     - Schema Registry (port 8081)
     - Kafka UI (port 8989)
 
-2. **Build the application**:
+2. **Kafka Topics Initialization**
+This project includes an `init-topics` container that automatically creates the required Kafka topics, ensuring proper setup before running the application.
+
+You can see its Dockerfile: [Dockerfile for init-topics](Dockerfile-init-topics)
+
+**Recommended Commands**
+
+2.1. Build the image (_first time or after modifying the script [init-topics.sh](scripts/init-topics.sh)_)
+   ```bash
+    docker-compose build init-topics
+   ```
+> The init-topics container runs automatically as a one-time job during startup and stops once the topics are created.
+
+2.2. Start all services and run the initialization script
+   ```bash
+     docker-compose up
+   ```
+
+2.3. **Optional:** rebuild and start all services
+   ```bash
+    docker-compose up --build
+   ```
+
+3. **Build the application**:
    ```bash
    ./mvnw clean install
    ```
 
-3. **Run the application**:
+4. **Run the application**:
    ```bash
    ./mvnw spring-boot:run -pl reference-data-api
    ```
