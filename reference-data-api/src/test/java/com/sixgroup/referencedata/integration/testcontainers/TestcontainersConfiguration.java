@@ -1,6 +1,5 @@
 package com.sixgroup.referencedata.integration.testcontainers;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.springframework.boot.test.context.TestConfiguration;
@@ -15,13 +14,9 @@ import org.testcontainers.utility.DockerImageName;
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfiguration {
 
-    public static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:latest"))
-        .withStartupTimeout(Duration.ofMinutes(2))
-        .withStartupAttempts(3)
-        .withReuse(false);
+    public static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka-native:latest"));
 
     static {
-        System.setProperty("testcontainers.reuse.enable", "false");
         kafkaContainer.start();
     }
 
